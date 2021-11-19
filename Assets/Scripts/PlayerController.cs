@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     public float jumpMultiplier = 1f;
     public float jumpForce = 0f;
 
+    public Camera cam;
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,6 +35,9 @@ public class PlayerController : MonoBehaviour
             //normalize the movement vector to make it 1
             movement = movement.normalized;
             //apply the movement to the rigidbody smoothly
+
+            //change the movment vector to be the same as the camera
+            movement = cam.transform.TransformDirection(movement);
 
             rb.AddForce(movement * speed);
         }
@@ -61,6 +66,11 @@ public class PlayerController : MonoBehaviour
         {
             bc.size = new Vector3(0.1f, 0.1f, 0.1f);
             bc.enabled = true;
+
+            //set the transform so that it is vertaical to the z axis
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            //remove rigidbody rotation velocity
+            rb.angularVelocity = Vector3.zero;
         }
          //if space is released, then set the jumpForce to 0
         if (Input.GetKeyUp(KeyCode.Space))
@@ -85,15 +95,20 @@ public class PlayerController : MonoBehaviour
             bc.size = new Vector3(0.1f, 0.1f, 0.1f);
             bc.enabled = false;
         }
+
+        //based on the velocity of the rigidbody, increase or decrease the feild of view
+        if(cam.gameObject.GetComponent<CameraFollow>().portalPoint != Vector3.zero) {
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, Mathf.Clamp(Mathf.Abs(rb.velocity.magnitude) * 5f, 0f, 50f) + 60, Time.deltaTime);
+        }
+
+
+        
     }
 
     bool IsGrounded()
     {
-        RaycastHit hit;
-        // create a ray
-        Ray ray = new Ray(transform.position, -Vector3.up);
-        Physics.Raycast(ray, out hit, 2f);
-        return hit.collider != null;
+        //return wether the player is colliding with anything
+        return Physics.CheckCapsule(sc.bounds.center, new Vector3(sc.bounds.center.x, sc.bounds.min.y, sc.bounds.center.z), sc.radius * 1.1f, LayerMask.GetMask("Default"));
     }
 
     
