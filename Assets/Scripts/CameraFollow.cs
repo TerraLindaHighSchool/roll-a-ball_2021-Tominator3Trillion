@@ -1,23 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CameraFollow : MonoBehaviour
 {
+
 
     public GameObject target;
     public float cameraDistance = 10f;
     private float cDist;
     public float cameraHeight = 5f;
     public float smoothTime = 3f;
+    public float portalSmooth = 3f;
+
+    public AudioClip portalPassSound;
+    public AudioClip portalRampSound;
+    private AudioSource audioSource;
     private Vector3 velocity = Vector3.zero;
 
     private Vector3 offset;
+
 
     public Vector3 portalPoint = Vector3.zero;
     private bool reachedPortalPoint = false;
 
     public float rotateValue = 0f;
+
+    private bool inPortalMovement = false;
+
+    public string[] levelNames;
+    public TextMeshProUGUI levelNameText;
+    private int currentLevel = 0;
 
 
     // Start is called before the first frame update
@@ -25,6 +39,7 @@ public class CameraFollow : MonoBehaviour
     {
         cDist = cameraDistance;
         offset = new Vector3(0, 0, 0);
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -33,41 +48,67 @@ public class CameraFollow : MonoBehaviour
 
         
         
-
+        Camera.main.GetComponent<Camera>().fieldOfView = Mathf.Lerp(Camera.main.GetComponent<Camera>().fieldOfView, 60f, Time.deltaTime * 1.5f);
 
         
 
         if(portalPoint != Vector3.zero)
         {
+            if(!inPortalMovement)
+            {
+                //play portal ramp sound
+                audioSource.clip = portalRampSound;
+                audioSource.Play();
+                inPortalMovement = true;
+                levelNameText.text = levelNames[currentLevel];
+                levelNameText.enabled = true;
+                //set opacity to 0
+                levelNameText.color = new Color(levelNameText.color.r, levelNameText.color.g, levelNameText.color.b, 0f);
+                currentLevel++;
+                
+            }
+
+
             if(Vector3.Distance(transform.position, portalPoint) > 20f)
             {
-                Debug.Log("Reached portal point");
+                reachedPortalPoint = false;
+                portalPoint = Vector3.zero;
 
-                //Get camera child
-                GameObject camChild = transform.GetChild(1).gameObject;
+                //play portal pass sound
+                audioSource.clip = portalPassSound;
+                audioSource.Play();
 
-                //enable the cameraFollow script on the camera
-                camChild.GetComponent<CameraFollow>().enabled = true;
-
-                //remove the camera as a child of the portalCam
-                camChild.transform.SetParent(null);
-
-                //delete the this 
-                Destroy(this.gameObject);
+                levelNameText.enabled = false;
+                portalSmooth = 1.5f; // make transitions quicker after the first portal
 
 
 
             } else {
+
+                //lerp the level name text to full opacity
+                levelNameText.color = new Color(levelNameText.color.r, levelNameText.color.g, levelNameText.color.b, Mathf.Lerp(levelNameText.color.a, 0.95f, Time.deltaTime * 2f));
+
+                Debug.Log("Not yet reached portal point");
                 //make a look point 10m below the portal point
                 Vector3 lookPoint = new Vector3(portalPoint.x, portalPoint.y - cameraHeight - 1f, portalPoint.z);
                 var targetRotation = Quaternion.LookRotation(lookPoint - transform.position);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime / smoothTime);
                 if(reachedPortalPoint) {
                     //start moving towards the look point
-                    transform.position = Vector3.SmoothDamp(transform.position, lookPoint, ref velocity, smoothTime / 1.5f);
+                    transform.position = Vector3.SmoothDamp(transform.position, lookPoint, ref velocity, portalSmooth / 1.5f);
 
                 } else {
-                    transform.position = Vector3.SmoothDamp(transform.position, portalPoint, ref velocity, smoothTime / 2.5f);
+                    transform.position = Vector3.SmoothDamp(transform.position, portalPoint, ref velocity, portalSmooth / 2.5f);
+                    //blur the camera the closer it gets to the portal point
+                    float dist = Vector3.Distance(transform.position, portalPoint);
+
+                    Camera.main.GetComponent<Camera>().fieldOfView = Mathf.Lerp(Camera.main.GetComponent<Camera>().fieldOfView, 60f - (dist * 2f), Time.deltaTime * 1.5f);
+                    // if(dist < 3f)
+                    // {
+                    //     Camera.main.GetComponent<Camera>().fieldOfView = Mathf.Lerp(Camera.main.GetComponent<Camera>().fieldOfView, 10f, Time.deltaTime /portalSmooth);
+                    // } else {
+                    //     Camera.main.GetComponent<Camera>().fieldOfView = Mathf.Lerp(Camera.main.GetComponent<Camera>().fieldOfView, 100f, Time.deltaTime * 1.5f);
+                    // }
                     if(Vector3.Distance(transform.position, portalPoint) < 0.1f)
                     {
                         reachedPortalPoint = true;

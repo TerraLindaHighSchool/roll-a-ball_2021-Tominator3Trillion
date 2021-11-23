@@ -14,15 +14,17 @@ public class PlayerController : MonoBehaviour
 
     public ReflectionProbe probe;
 
-    public Camera cam;
+    public GameObject cam;
 
     public TextMeshProUGUI scoreText;
+
+    public Transform checkPoint;
 
     private AudioSource audioSource;
 
     private string groundType = "none";
 
-
+    public AudioClip coinCollectSound;
     public AudioClip platformRoll;
     public AudioClip grassRoll;
     public AudioClip stoneRoll;
@@ -39,6 +41,8 @@ public class PlayerController : MonoBehaviour
 
 
 
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -47,6 +51,8 @@ public class PlayerController : MonoBehaviour
         bc = GetComponent<BoxCollider>();
         bc.enabled = false;
         audioSource = GetComponent<AudioSource>();
+
+        transform.position = checkPoint.position;
     }
 
     // Update is called once per frame
@@ -126,10 +132,26 @@ public class PlayerController : MonoBehaviour
             bc.size = new Vector3(0.1f, 0.1f, 0.1f);
             bc.enabled = false;
         }
+        else if (Input.GetKey(KeyCode.F) && IsGrounded())
+        {
+            //move the velocity towards 0 with lerp
+            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime*speed);
+        } else if (Input.GetKey(KeyCode.R))
+        {
+            //reset the position of the player to the checkpoint
+            transform.position = checkPoint.position;
+            rb.velocity = Vector3.zero;
+
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            rb.angularVelocity = Vector3.zero;
+        }
+
 
         //based on the velocity of the rigidbody, increase or decrease the feild of view
         if(cam.gameObject.GetComponent<CameraFollow>().portalPoint != Vector3.zero) {
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, Mathf.Clamp(Mathf.Abs(rb.velocity.magnitude) * 5f, 0f, 50f) + 60, Time.deltaTime);
+            //get camera child of cam object
+            Camera camChild = cam.transform.GetChild(1).GetComponent<Camera>();
+            camChild.fieldOfView = Mathf.Lerp(camChild.fieldOfView, Mathf.Clamp(Mathf.Abs(rb.velocity.magnitude) * 5f, 0f, 50f) + 60, Time.deltaTime);
         }
 
 
@@ -169,6 +191,16 @@ public class PlayerController : MonoBehaviour
         
         //set downward velocity to be the negative of the y velocity
         downwardVelocity = -rb.velocity.y;
+
+
+        if(transform.position.y < -10f) {
+            transform.position = checkPoint.position;
+            rb.velocity = Vector3.zero;
+
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            rb.angularVelocity = Vector3.zero;
+            
+        }
     }
 
     bool IsGrounded()
@@ -189,6 +221,9 @@ public class PlayerController : MonoBehaviour
             if(other.gameObject.GetComponent<CoinController>() != null && !other.gameObject.GetComponent<CoinController>().collected) {
                 other.gameObject.GetComponent<CoinController>().Collect();
                 scoreText.text = (int.Parse(scoreText.text) + 1).ToString();
+                //play the coinCollect sound
+                audioSource.PlayOneShot(coinCollectSound);
+
             }
         
 

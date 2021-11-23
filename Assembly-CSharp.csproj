@@ -36,9 +36,6 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\CoinController.cs" />
-     <Compile Include="Assets\FreeCam.cs" />
-     <Compile Include="Assets\PlayerPortalPhysics.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\CameraUtility.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\MainCamera.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\Portal.cs" />
@@ -51,7 +48,10 @@
      <Compile Include="Assets\Portals\Scripts\Demo\PortalPhysicsObject.cs" />
      <Compile Include="Assets\Portals\Scripts\Demo\Spawner.cs" />
      <Compile Include="Assets\Scripts\CameraFollow.cs" />
+     <Compile Include="Assets\Scripts\CoinController.cs" />
+     <Compile Include="Assets\Scripts\FreeCam.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
+     <Compile Include="Assets\Scripts\PlayerPortalPhysics.cs" />
      <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
      <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
