@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
@@ -11,7 +12,31 @@ public class PlayerController : MonoBehaviour
     public float jumpMultiplier = 1f;
     public float jumpForce = 0f;
 
+    public ReflectionProbe probe;
+
     public Camera cam;
+
+    public TextMeshProUGUI scoreText;
+
+    private AudioSource audioSource;
+
+    private string groundType = "none";
+
+
+    public AudioClip platformRoll;
+    public AudioClip grassRoll;
+    public AudioClip stoneRoll;
+    public AudioClip woodRoll;
+    public AudioClip metalRoll;
+
+    public AudioClip land;
+
+    private float downwardVelocity = 0f;
+
+    private float lastGroundedTime = 0;
+
+    private bool touchingPortal = false;
+
 
 
     // Start is called before the first frame update
@@ -21,6 +46,7 @@ public class PlayerController : MonoBehaviour
         sc = GetComponent<SphereCollider>();
         bc = GetComponent<BoxCollider>();
         bc.enabled = false;
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -56,7 +82,12 @@ public class PlayerController : MonoBehaviour
             bc.size = Vector3.Lerp(bc.size, new Vector3(1f, 0.1f, 1f), Time.deltaTime*3);
         }
 
-       
+       //update probe reflection map
+
+       if(!touchingPortal) {
+           probe.RenderProbe();
+       }
+
 
     }
 
@@ -102,13 +133,112 @@ public class PlayerController : MonoBehaviour
         }
 
 
+
+        //set the audio player volume based on teh velocity of the rigidbody
+        audioSource.volume = Mathf.Clamp(Mathf.Abs(rb.velocity.magnitude) * 0.1f, 0f, 1f);
+
+        if(!IsGrounded()) {
+            audioSource.volume = 0f;
+        }
+
+
+        switch(groundType) {
+            case "none":
+                audioSource.clip = null;
+                break;
+            case "platform":
+                audioSource.clip = platformRoll;
+                break;    
+            case "grass":
+                audioSource.clip = grassRoll;
+                break;
+            case "stone":
+                audioSource.clip = stoneRoll;
+                break;
+            case "wood":
+                audioSource.clip = woodRoll;
+                break;
+            default:
+                audioSource.clip = platformRoll;
+                break;
+
+        }
+        if(audioSource.clip != null && !audioSource.isPlaying && IsGrounded()) {
+            audioSource.Play();
+        }
         
+        //set downward velocity to be the negative of the y velocity
+        downwardVelocity = -rb.velocity.y;
     }
 
     bool IsGrounded()
     {
-        //return wether the player is colliding with anything
-        return Physics.CheckCapsule(sc.bounds.center, new Vector3(sc.bounds.center.x, sc.bounds.min.y, sc.bounds.center.z), sc.radius * 1.1f, LayerMask.GetMask("Default"));
+        //rwturn wether groundType is not none
+        return groundType != "none";
+    }
+
+    //on collision enter with a trigger, check if the gameobject has the tag coin
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("Coin"))
+        {
+
+            Debug.Log("Coin");
+            
+            //increase the score by 1
+            if(other.gameObject.GetComponent<CoinController>() != null && !other.gameObject.GetComponent<CoinController>().collected) {
+                other.gameObject.GetComponent<CoinController>().Collect();
+                scoreText.text = (int.Parse(scoreText.text) + 1).ToString();
+            }
+        
+
+        }
+
+        //check if the gameobject has the default tag
+        if (other.gameObject.CompareTag("Platform"))
+        {
+            groundType = "platform";
+
+            //if velocity is greater than 0.1f, then play the land sound
+            if (downwardVelocity > 0.5f && lastGroundedTime + 0.3f < Time.time) {
+                //set the volume based on the downward velocity
+                audioSource.volume = Mathf.Clamp(Mathf.Abs(downwardVelocity) * 0.1f - 0.5f, 0f, 1f);
+                audioSource.PlayOneShot(land);
+            }
+        }
+
+        if(other.gameObject.CompareTag("Grass")) {
+            groundType = "grass";
+        }
+
+        if(other.gameObject.CompareTag("Portal")) {
+            touchingPortal = true;
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.CompareTag("Platform"))
+        {
+            groundType = "platform";
+        }
+        if(other.gameObject.CompareTag("Grass")) {
+            groundType = "grass";
+        }
+        if(other.gameObject.CompareTag("Portal")) {
+            touchingPortal = true;
+        }
+    }
+
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.CompareTag("Platform") || other.gameObject.CompareTag("Grass"))
+        {
+            groundType = "none";
+            lastGroundedTime = Time.time;
+        }
+
     }
 
     

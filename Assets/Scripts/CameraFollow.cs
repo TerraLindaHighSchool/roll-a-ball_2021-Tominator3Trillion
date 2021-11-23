@@ -17,7 +17,7 @@ public class CameraFollow : MonoBehaviour
     public Vector3 portalPoint = Vector3.zero;
     private bool reachedPortalPoint = false;
 
-    private float rotateValue = 0f;
+    public float rotateValue = 0f;
 
 
     // Start is called before the first frame update
@@ -41,18 +41,33 @@ public class CameraFollow : MonoBehaviour
         {
             if(Vector3.Distance(transform.position, portalPoint) > 20f)
             {
-                //Add stuff
+                Debug.Log("Reached portal point");
+
+                //Get camera child
+                GameObject camChild = transform.GetChild(1).gameObject;
+
+                //enable the cameraFollow script on the camera
+                camChild.GetComponent<CameraFollow>().enabled = true;
+
+                //remove the camera as a child of the portalCam
+                camChild.transform.SetParent(null);
+
+                //delete the this 
+                Destroy(this.gameObject);
+
+
+
             } else {
                 //make a look point 10m below the portal point
-                Vector3 lookPoint = new Vector3(portalPoint.x, portalPoint.y - 11, portalPoint.z);
+                Vector3 lookPoint = new Vector3(portalPoint.x, portalPoint.y - cameraHeight - 1f, portalPoint.z);
                 var targetRotation = Quaternion.LookRotation(lookPoint - transform.position);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime / smoothTime);
                 if(reachedPortalPoint) {
                     //start moving towards the look point
-                    transform.parent.position = Vector3.SmoothDamp(transform.position, lookPoint, ref velocity, smoothTime);
+                    transform.position = Vector3.SmoothDamp(transform.position, lookPoint, ref velocity, smoothTime / 1.5f);
 
                 } else {
-                    transform.parent.position = Vector3.Lerp(transform.position, portalPoint, Time.deltaTime * 3f);
+                    transform.position = Vector3.SmoothDamp(transform.position, portalPoint, ref velocity, smoothTime / 2.5f);
                     if(Vector3.Distance(transform.position, portalPoint) < 0.1f)
                     {
                         reachedPortalPoint = true;
@@ -118,12 +133,23 @@ public class CameraFollow : MonoBehaviour
             if (Input.GetAxis("Mouse ScrollWheel") > 0)
             {
                 cameraDistance -= 0.1f;
+                //make sure the camera distance is more than 20
+                if (cameraDistance < 2)
+                {
+                    cameraDistance = 2;
+                }
                 cDist = cameraDistance;
                 Debug.Log("Scroll up");
             }
             else if (Input.GetAxis("Mouse ScrollWheel") < 0)
             {
                 cameraDistance += 0.1f;
+                //make sure camera distance is not less than 2
+                if (cameraDistance > 20)
+                {
+                    cameraDistance = 20;
+                }
+                
                 cDist   = cameraDistance;
             }
         }

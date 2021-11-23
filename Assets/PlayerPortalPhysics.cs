@@ -12,6 +12,8 @@ public class PlayerPortalPhysics : PortalTraveller {
 
     public PlayerController player;
 
+    public GameObject portalCamPrefab;
+
     void Awake () {
         rigidbody = GetComponent<Rigidbody> ();
         graphicsObject.GetComponent<MeshRenderer> ().material.color = colors[i];
@@ -23,28 +25,27 @@ public class PlayerPortalPhysics : PortalTraveller {
 
     public override void Teleport (Transform fromPortal, Transform toPortal, Vector3 pos, Quaternion rot) {
         base.Teleport (fromPortal, toPortal, pos, rot);
-        rigidbody.velocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rigidbody.velocity));
-        rigidbody.angularVelocity = toPortal.TransformVector (fromPortal.InverseTransformVector (rigidbody.angularVelocity));
+        rigidbody.velocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
 
 
 
-        GameObject sphere = GameObject.CreatePrimitive (PrimitiveType.Sphere);
-        //set the position of the sphere to the position of the cam
-        sphere.transform.position = player.cam.transform.position;
-        //set the sphere as a parent of the cam
-        player.cam.transform.parent = sphere.transform;
+        //Instantiat a portal cam
+        GameObject portalCam = Instantiate (portalCamPrefab, player.cam.transform.position, player.cam.transform.rotation);
 
-        //add the script PortalTraveller to the sphere
-        sphere.AddComponent<PortalTraveller> ();
+        //remove the cameraFollow script from the camera
+        player.cam.GetComponent<CameraFollow> ().rotateValue = 0f;
+        player.cam.GetComponent<CameraFollow> ().enabled = false;
+        //set the portalCam target to this
+        portalCam.GetComponent<CameraFollow> ().target = transform.gameObject;
 
-        //set the graphics object of the sphere to itself
-        sphere.GetComponent<PortalTraveller> ().graphicsObject = player.cam.gameObject;
-
-
-
-        player.cam.gameObject.GetComponent<CameraFollow> ().portalPoint = new Vector3 (fromPortal.position.x, fromPortal.position.y + player.cam.gameObject.GetComponent<CameraFollow> ().cameraHeight, fromPortal.position.z);
+        //add the cam as a child of the portalCam
+        player.cam.transform.SetParent (portalCam.transform);
 
 
+        portalCam.GetComponent<CameraFollow> ().portalPoint = new Vector3 (fromPortal.position.x + 2f, fromPortal.position.y + player.cam.gameObject.GetComponent<CameraFollow> ().cameraHeight, fromPortal.position.z);
+
+        
         
     }
 }
