@@ -29,9 +29,12 @@ public class CameraFollow : MonoBehaviour
 
     private bool inPortalMovement = false;
 
+
     public string[] levelNames;
+    public List<Vector3> portalPositions;
     public TextMeshProUGUI levelNameText;
     private int currentLevel = 0;
+    
 
 
     // Start is called before the first frame update
@@ -60,11 +63,29 @@ public class CameraFollow : MonoBehaviour
                 audioSource.clip = portalRampSound;
                 audioSource.Play();
                 inPortalMovement = true;
+                
+                //set the level to the closest portal position in the list
+                currentLevel = 0;
+                float closestDistance = Vector3.Distance(portalPositions[0], portalPoint);
+                for(int i = 1; i < portalPositions.Count; i++)
+                {
+                    float distance = Vector3.Distance(portalPositions[i], portalPoint);
+                    if(distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        currentLevel = i;
+                    }
+                }
+            
+
+
+
                 levelNameText.text = levelNames[currentLevel];
                 levelNameText.enabled = true;
                 //set opacity to 0
                 levelNameText.color = new Color(levelNameText.color.r, levelNameText.color.g, levelNameText.color.b, 0f);
-                currentLevel++;
+                //set the current level to the index of portalPoint in the vector3 array called portalPositions
+                
                 
             }
 
@@ -77,8 +98,9 @@ public class CameraFollow : MonoBehaviour
                 //play portal pass sound
                 audioSource.clip = portalPassSound;
                 audioSource.Play();
-
+ 
                 levelNameText.enabled = false;
+                inPortalMovement = false;
                 portalSmooth = 1.5f; // make transitions quicker after the first portal
 
 

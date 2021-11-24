@@ -235,9 +235,9 @@ public class PlayerController : MonoBehaviour
             groundType = "platform";
 
             //if velocity is greater than 0.1f, then play the land sound
-            if (downwardVelocity > 0.5f && lastGroundedTime + 0.3f < Time.time) {
+            if (downwardVelocity > 0.2f && lastGroundedTime + 0.3f < Time.time) {
                 //set the volume based on the downward velocity
-                audioSource.volume = Mathf.Clamp(Mathf.Abs(downwardVelocity) * 0.1f - 0.5f, 0f, 1f);
+                audioSource.volume = Mathf.Clamp(Mathf.Abs(downwardVelocity) * 0.1f - 0.2f, 0f, 1f);
                 audioSource.PlayOneShot(land);
             }
         }
