@@ -50,7 +50,7 @@ public class PlayerPortalPhysics : PortalTraveller {
 
         player.cam.GetComponent<CameraFollow> ().portalPoint = new Vector3 (fromPortal.position.x + 2f, fromPortal.position.y + player.cam.GetComponent<CameraFollow> ().cameraHeight, fromPortal.position.z);
         
-        
+        GetComponent<PlayerController>().checkPoint = toPortal;
         
     }
 }
