@@ -103,6 +103,8 @@ public class CameraFollow : MonoBehaviour
                 inPortalMovement = false;
                 portalSmooth = 1.5f; // make transitions quicker after the first portal
 
+                target.GetComponent<PlayerPortalPhysics>().graphicsObject = target.GetComponent<PlayerPortalPhysics>().graphicsClone;
+
 
 
             } else {
@@ -179,7 +181,12 @@ public class CameraFollow : MonoBehaviour
                     
                     
                 } else {
-                    cDist = Mathf.Lerp(cDist, 0, Time.deltaTime);
+                    //make sure the collider is not a trigger
+                    if(!hit.collider.isTrigger)
+                    {
+                        cDist = Mathf.Lerp(cDist, 0, Time.deltaTime);
+                    }
+                    
                 }
             }
             

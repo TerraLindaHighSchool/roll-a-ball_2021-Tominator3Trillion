@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody rb;
@@ -39,6 +40,16 @@ public class PlayerController : MonoBehaviour
 
     private bool touchingPortal = false;
 
+    [SerializeField]public float playerTemp = 0f;
+
+    public Renderer renderer;
+
+    public Color glowingColor;
+    public Light glowLight;
+
+    private Color originalColor;
+    private bool inFire = false;
+
 
 
 
@@ -51,6 +62,7 @@ public class PlayerController : MonoBehaviour
         bc = GetComponent<BoxCollider>();
         bc.enabled = false;
         audioSource = GetComponent<AudioSource>();
+        originalColor = renderer.material.color;
 
         transform.position = checkPoint.position;
     }
@@ -80,12 +92,14 @@ public class PlayerController : MonoBehaviour
         //check if space is being held down
         if (Input.GetKey(KeyCode.Space))
         {
+            //make a timeMultiplier based on the player temp
+            float timeMultiplier = playerTemp / 150f;
             //slowly add force to the jumpforce using lerp to a max of 10
-            jumpForce = Mathf.Lerp(jumpForce, 10, Time.deltaTime);
+            jumpForce = Mathf.Lerp(jumpForce, 10, Time.deltaTime*timeMultiplier);
             //slowly shrink the height of this gameobject using lerp to a min of 0.1
-            transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(2f, 0.1f, 2f), Time.deltaTime);
-            sc.radius = Mathf.Lerp(sc.radius, 0.01f, Time.deltaTime);
-            bc.size = Vector3.Lerp(bc.size, new Vector3(1f, 0.1f, 1f), Time.deltaTime*3);
+            transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(2f, 0.1f, 2f), Time.deltaTime*timeMultiplier);
+            sc.radius = Mathf.Lerp(sc.radius, 0.01f, Time.deltaTime*timeMultiplier);
+            bc.size = Vector3.Lerp(bc.size, new Vector3(1f, 0.1f, 1f), Time.deltaTime*3*timeMultiplier);
         }
 
        //update probe reflection map
@@ -99,6 +113,33 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!inFire) {
+            playerTemp = Mathf.Lerp(playerTemp, 0f, Time.deltaTime/10f);
+            if(playerTemp < 30f) {
+                playerTemp = Mathf.Lerp(playerTemp, 0f, Time.deltaTime);
+            }
+        }
+            
+
+         if(playerTemp < 1f) {
+             playerTemp = 0f;
+             glowLight.intensity = 0f;
+         } else {
+             glowLight.intensity = playerTemp/255f*3f;
+         }
+        
+
+        
+
+        //set the renderer color based on the player temp
+        renderer.material.color = Color.Lerp(originalColor, glowingColor, playerTemp/255f);
+        //lerp the emmision color of the renderer based on the player temp
+        renderer.material.SetColor("_EmissionColor", Color.Lerp(Color.black, glowingColor, playerTemp/255f));
+
+        //set the light intensity based on the player temp
+        
+
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             bc.size = new Vector3(0.1f, 0.1f, 0.1f);
@@ -201,6 +242,8 @@ public class PlayerController : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
             
         }
+        
+
     }
 
     bool IsGrounded()
@@ -242,12 +285,15 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if(other.gameObject.CompareTag("Grass")) {
+        else if(other.gameObject.CompareTag("Grass")) {
             groundType = "grass";
         }
 
-        if(other.gameObject.CompareTag("Portal")) {
+        else if(other.gameObject.CompareTag("Portal")) {
             touchingPortal = true;
+        } else if (other.gameObject.CompareTag("Fire"))
+        {
+            inFire = true;
         }
     }
 
@@ -257,11 +303,19 @@ public class PlayerController : MonoBehaviour
         {
             groundType = "platform";
         }
-        if(other.gameObject.CompareTag("Grass")) {
+        else if(other.gameObject.CompareTag("Grass")) {
             groundType = "grass";
         }
-        if(other.gameObject.CompareTag("Portal")) {
+        else if(other.gameObject.CompareTag("Portal")) {
             touchingPortal = true;
+        }
+
+        //check if tag is "Fire"
+        else if (other.gameObject.CompareTag("Fire"))
+        {
+            //if the player is touching the fire lerp the player temperature towards 255
+            playerTemp = Mathf.Lerp(playerTemp, 255f, Time.deltaTime/4f);
+
         }
     }
 
@@ -272,6 +326,9 @@ public class PlayerController : MonoBehaviour
         {
             groundType = "none";
             lastGroundedTime = Time.time;
+        } else if (other.gameObject.CompareTag("Fire"))
+        {
+            inFire = false;
         }
 
     }

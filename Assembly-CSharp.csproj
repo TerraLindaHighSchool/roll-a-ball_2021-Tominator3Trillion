@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\FreeCam.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\PlayerPortalPhysics.cs" />
+     <Compile Include="Assets\Scripts\TutorialArea.cs" />
      <Compile Include="Assets\Shared\Ramps\Runtime\RampAsset.cs" />
      <Compile Include="Assets\Shared\Scripts\AdjustTimeScale.cs" />
      <Compile Include="Assets\Shared\Scripts\ProximityActivate.cs" />
@@ -637,6 +638,9 @@
     <Reference Include="com.unity.multiplayer-hlapi.Editor">
         <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/com.unity.multiplayer-hlapi.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.ProGrids">
+        <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/Unity.ProGrids.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.VSCode.Editor">
         <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/Unity.VSCode.Editor.dll</HintPath>
     </Reference>
@@ -648,6 +652,9 @@
     </Reference>
     <Reference Include="UnityEngine.Advertisements">
         <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/UnityEngine.Advertisements.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.ProGrids.Editor">
+        <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/Unity.ProGrids.Editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.Purchasing">
         <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>
@@ -726,12 +733,6 @@
     </Reference>
     <Reference Include="com.unity.multiplayer-hlapi.Runtime">
         <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/com.unity.multiplayer-hlapi.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProGrids">
-        <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/Unity.ProGrids.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ProGrids.Editor">
-        <HintPath>C:/Users/tm02246/GameDesignProjects/roll-a-ball_2021-Tominator3Trillion/Library/ScriptAssemblies/Unity.ProGrids.Editor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
