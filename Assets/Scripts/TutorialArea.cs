@@ -9,6 +9,9 @@ public class TutorialArea : MonoBehaviour
     public string falseTutorialText;
 
     public TextMeshProUGUI textMesh;
+    public AudioClip trueClip;
+    public AudioClip falseClip;
+    public AudioSource audioSource;
 
     public bool isMiniTutorial = false;
 
@@ -18,21 +21,6 @@ public class TutorialArea : MonoBehaviour
 
 
 
-    //on collider enter with player
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.tag == "Player" && shouldChange(other))
-        {
-            if(checkConditions(other.gameObject))
-            {
-                textMesh.text = trueTutorialText;
-            }
-            else
-            {
-                textMesh.text = falseTutorialText;
-            }
-        }
-    }
 
 
     private void OnTriggerStay(Collider other)
@@ -41,11 +29,23 @@ public class TutorialArea : MonoBehaviour
         {
             if(checkConditions(other.gameObject))
             {
-                textMesh.text = trueTutorialText;
+                if(textMesh.text != trueTutorialText)
+                {
+                    textMesh.text = trueTutorialText;
+                    audioSource.clip = trueClip;
+                    audioSource.Play();
+                }
+
+                
             }
             else
             {
-                textMesh.text = falseTutorialText;
+                if (textMesh.text != falseTutorialText)
+                {
+                    textMesh.text = falseTutorialText;
+                    audioSource.clip = falseClip;
+                    audioSource.Play();
+                }
             }
         }
     }

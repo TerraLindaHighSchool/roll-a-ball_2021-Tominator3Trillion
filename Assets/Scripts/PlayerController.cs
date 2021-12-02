@@ -176,7 +176,7 @@ public class PlayerController : MonoBehaviour
         else if (Input.GetKey(KeyCode.F) && IsGrounded())
         {
             //move the velocity towards 0 with lerp
-            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime*speed);
+            rb.velocity = Vector3.Lerp(rb.velocity, Vector3.zero, Time.deltaTime*speed*2);
         } else if (Input.GetKey(KeyCode.R))
         {
             //reset the position of the player to the checkpoint
@@ -294,6 +294,13 @@ public class PlayerController : MonoBehaviour
         } else if (other.gameObject.CompareTag("Fire"))
         {
             inFire = true;
+        }
+
+        else if (other.gameObject.CompareTag("CheckPoint"))
+        {
+            checkPoint = other.gameObject.transform;
+            //disable the other
+            other.gameObject.SetActive(false);
         }
     }
 
