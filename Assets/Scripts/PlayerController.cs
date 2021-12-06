@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     public TextMeshProUGUI scoreText;
 
     public Transform checkPoint;
+    public GameObject checkPointParticle;
 
     private AudioSource audioSource;
 
@@ -49,6 +50,8 @@ public class PlayerController : MonoBehaviour
 
     private Color originalColor;
     private bool inFire = false;
+
+    
 
 
 
@@ -301,6 +304,10 @@ public class PlayerController : MonoBehaviour
             checkPoint = other.gameObject.transform;
             //disable the other
             other.gameObject.SetActive(false);
+            //instantiate the checkPointParticle
+            GameObject cp = Instantiate(checkPointParticle, other.gameObject.transform.position, Quaternion.identity);
+            //destroy the particle after 2 seconds
+            Destroy(cp, cp.GetComponent<ParticleSystem>().main.duration-0.1f);
         }
     }
 
