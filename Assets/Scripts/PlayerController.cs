@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
 
     public Transform checkPoint;
     public GameObject checkPointParticle;
+    public GameObject respawnParticle;
+    private float timeSinceRespawn;
 
     private AudioSource audioSource;
 
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip land;
 
     private float downwardVelocity = 0f;
+    public float currentVelocity = 0f;
 
     private float lastGroundedTime = 0;
 
@@ -51,15 +54,20 @@ public class PlayerController : MonoBehaviour
     private Color originalColor;
     private bool inFire = false;
 
+
+
     
 
 
 
-
+    public object StringToVariable(string name) {
+        return this.GetType().GetField(name).GetValue(this);
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        timeSinceRespawn = Time.time;
         rb  = GetComponent<Rigidbody>();
         sc = GetComponent<SphereCollider>();
         bc = GetComponent<BoxCollider>();
@@ -116,6 +124,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        currentVelocity = rb.velocity.magnitude;
         if (!inFire) {
             playerTemp = Mathf.Lerp(playerTemp, 0f, Time.deltaTime/10f);
             if(playerTemp < 30f) {
@@ -183,11 +192,10 @@ public class PlayerController : MonoBehaviour
         } else if (Input.GetKey(KeyCode.R))
         {
             //reset the position of the player to the checkpoint
-            transform.position = checkPoint.position;
-            rb.velocity = Vector3.zero;
-
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-            rb.angularVelocity = Vector3.zero;
+            if(Time.time-timeSinceRespawn > 1f) {
+                Respawn();
+            }
+            
         }
 
 
@@ -238,15 +246,23 @@ public class PlayerController : MonoBehaviour
 
 
         if(transform.position.y < -10f) {
-            transform.position = checkPoint.position;
-            rb.velocity = Vector3.zero;
-
-            transform.rotation = Quaternion.Euler(0, 0, 0);
-            rb.angularVelocity = Vector3.zero;
+            Respawn();
             
         }
         
 
+    }
+
+
+    void Respawn() {
+        transform.position = checkPoint.position;
+        rb.velocity = Vector3.zero;
+        transform.rotation = Quaternion.Euler(0, 0, 0);
+        rb.angularVelocity = Vector3.zero;
+        GameObject g = Instantiate(respawnParticle, transform.position, Quaternion.identity);
+        //set size to 0.9
+        g.transform.parent = transform;
+        timeSinceRespawn = Time.time;
     }
 
     bool IsGrounded()
