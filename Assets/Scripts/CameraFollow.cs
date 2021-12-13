@@ -34,6 +34,10 @@ public class CameraFollow : MonoBehaviour
     public List<Vector3> portalPositions;
     public TextMeshProUGUI levelNameText;
     private int currentLevel = 0;
+
+    private bool inMapMode = false;
+    public GameObject mapPostprocessing;
+
     
 
 
@@ -43,11 +47,37 @@ public class CameraFollow : MonoBehaviour
         cDist = cameraDistance;
         offset = new Vector3(0, 0, 0);
         audioSource = GetComponent<AudioSource>();
+        mapPostprocessing.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
-    {
+    {   
+        //if keyinput is M, turn on inMapMode
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            inMapMode = !inMapMode;
+            mapPostprocessing.SetActive(inMapMode);
+            target.GetComponent<PlayerController>().enabled = !inMapMode;
+            gameObject.GetComponent<PortalTraveller>().enabled = !inMapMode;
+        }
+
+        if(inMapMode) {
+            
+            //move the camera 40 units above the target and turn the camera to look at the target
+            
+            //lerp the position
+            transform.position = Vector3.Lerp(transform.position, target.transform.position + new Vector3(0, 150, 0), Time.deltaTime * portalSmooth);
+            transform.LookAt(target.transform.position);
+
+            //lerp the field of view to 150
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 40, Time.deltaTime * portalSmooth);
+
+            return;
+            
+        }
+
+        Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 90, Time.deltaTime * portalSmooth);
 
         
         
