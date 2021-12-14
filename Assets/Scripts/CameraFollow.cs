@@ -58,7 +58,7 @@ public class CameraFollow : MonoBehaviour
         {
             inMapMode = !inMapMode;
             mapPostprocessing.SetActive(inMapMode);
-            target.GetComponent<PlayerController>().enabled = !inMapMode;
+            //target.GetComponent<PlayerController>().enabled = !inMapMode;
             gameObject.GetComponent<PortalTraveller>().enabled = !inMapMode;
         }
 

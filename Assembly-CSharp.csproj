@@ -50,6 +50,7 @@
      <Compile Include="Assets\Portals\Scripts\Demo\FPSController.cs" />
      <Compile Include="Assets\Portals\Scripts\Demo\PortalPhysicsObject.cs" />
      <Compile Include="Assets\Portals\Scripts\Demo\Spawner.cs" />
+     <Compile Include="Assets\Rocket.cs" />
      <Compile Include="Assets\RocketManager.cs" />
      <Compile Include="Assets\Scripts\CameraFollow.cs" />
      <Compile Include="Assets\Scripts\Checkpoint.cs" />
