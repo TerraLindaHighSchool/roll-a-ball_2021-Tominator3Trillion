@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 3376808071898872836}
   - component: {fileID: 3919219359300916098}
   m_Layer: 0
-  m_Name: Rocket
+  m_Name: Bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -269,7 +269,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 10
   maxDistance: 100
-  explosionSound: {fileID: 8300000, guid: 1ec752c2e538a654e8416c4a098b1ef6, type: 3}
+  explosionScale: 10
+  explosionSound: {fileID: 8300000, guid: f9fdf96813cfb724c86396372bcad060, type: 3}
   explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
 --- !u!82 &3919219359300916098
@@ -282,20 +283,20 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: df98c25bd073d7c469f2df09f8680fda, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 0.79
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 50
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -328,7 +329,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0

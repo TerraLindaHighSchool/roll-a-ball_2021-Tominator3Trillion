@@ -62,20 +62,7 @@ public class CameraFollow : MonoBehaviour
             gameObject.GetComponent<PortalTraveller>().enabled = !inMapMode;
         }
 
-        if(inMapMode) {
-            
-            //move the camera 40 units above the target and turn the camera to look at the target
-            
-            //lerp the position
-            transform.position = Vector3.Lerp(transform.position, target.transform.position + new Vector3(0, 150, 0), Time.deltaTime * portalSmooth);
-            transform.LookAt(target.transform.position);
-
-            //lerp the field of view to 150
-            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 40, Time.deltaTime * portalSmooth);
-
-            return;
-            
-        }
+        
 
         Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 90, Time.deltaTime * portalSmooth);
 
@@ -254,7 +241,20 @@ public class CameraFollow : MonoBehaviour
             }
         }
         
+        if(inMapMode) {
+            
+            //move the camera 40 units above the target and turn the camera to look at the target
+            
+            //lerp the position
+            transform.position = Vector3.Lerp(transform.position, target.transform.position + new Vector3(0, 200f, 0), Time.deltaTime * portalSmooth);
+            transform.LookAt(target.transform.position);
 
+            //lerp the field of view to 150
+            Camera.main.fieldOfView = Mathf.Lerp(Camera.main.fieldOfView, 40, Time.deltaTime * portalSmooth);
+
+            return;
+            
+        }
         
 
     }

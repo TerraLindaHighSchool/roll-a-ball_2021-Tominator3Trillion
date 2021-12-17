@@ -5,7 +5,7 @@ using UnityEngine;
 public class RocketManager : MonoBehaviour
 {
     //public Image cursorImage;
-    private long startClickTime;
+    private float startClickTime;
     public GameObject bombPrefab;
     public GameObject rocketPrefab;
     public GameObject rocketTrailPrefab;
@@ -40,8 +40,8 @@ public class RocketManager : MonoBehaviour
         }
         if(Input.GetMouseButtonDown(0))
         {
-            
-            startClickTime = System.DateTime.Now.Ticks;
+            //miliseconds since the last click
+            startClickTime = Time.time;
             audioSource.clip = lockOnSound;
             audioSource.Play();
         }
@@ -53,23 +53,26 @@ public class RocketManager : MonoBehaviour
                 audioSource.Stop();
             }
         }
-
-        if (startClickTime!= 0 && System.DateTime.Now.Ticks - startClickTime > 10000) {
+        if (startClickTime!= 0 && (Time.time - startClickTime) > 1f) {
             startClickTime = 0;
-            audioSource.PlayOneShot(launchSound);
-            GameObject rocket = Instantiate(rocketPrefab, transform.position, new Quaternion(180,0,0,0));
-            //rotate teh rocket towards the mouse position
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.z = 10f;
-            Vector3 mousePosWorld = Camera.main.ScreenToWorldPoint(mousePos);
-            Vector3 direction = mousePosWorld - transform.position;
-            direction.y = 0;
-            direction.Normalize();
-            rocket.transform.rotation = Quaternion.LookRotation(direction);
+            //disable parent collider
+            transform.parent.GetComponent<Collider>().enabled = false;
+            GetComponent<Collider>().enabled = false;
+            GameObject rocket = null;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+
+            if(Physics.Raycast(ray, out hit))
+            {
+                rocket = Instantiate(rocketPrefab, transform.position, Quaternion.identity);
+                rocket.GetComponent<Rocket>().target = hit.point;
+            }
+            transform.parent.GetComponent<Collider>().enabled = true;
+            GetComponent<Collider>().enabled = true;
             //add force to the rocket
-            rocket.GetComponent<Rigidbody>().AddForce(direction * 10f);
             GameObject rocketTrail = Instantiate(rocketTrailPrefab, transform.position, transform.rotation);
-            Destroy(rocketTrail, 2f);
+            Destroy(rocketTrail, 1f);
             //rocket.GetComponent<Rocket>().SetTarget(Camera.main.ScreenToWorldPoint(Input.mousePosition));
 
         }

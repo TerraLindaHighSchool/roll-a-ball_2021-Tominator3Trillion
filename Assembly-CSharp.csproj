@@ -37,6 +37,7 @@
   </PropertyGroup>
   <ItemGroup>
      <Compile Include="Assets\ButtonController.cs" />
+     <Compile Include="Assets\CameraShake.cs" />
      <Compile Include="Assets\EffectExamples\Misc Effects\Scripts\SpawnEffect.cs" />
      <Compile Include="Assets\LockToObject.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\CameraUtility.cs" />
