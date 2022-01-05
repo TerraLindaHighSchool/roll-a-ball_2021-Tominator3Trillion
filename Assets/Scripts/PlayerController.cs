@@ -54,6 +54,16 @@ public class PlayerController : MonoBehaviour
     private Color originalColor;
     private bool inFire = false;
 
+    //bomb and rocket count TMP
+    public TextMeshProUGUI bombCountText;
+    public TextMeshProUGUI rocketCountText;
+
+
+    [SerializeField]public int bombCount = 0;
+    [SerializeField]public int rocketCount = 0;
+
+    
+
 
 
     
@@ -67,6 +77,8 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        bombCountText.text = "Bombs: " + bombCount;
+        rocketCountText.text = "Rockets: " + rocketCount;
         timeSinceRespawn = Time.time;
         rb  = GetComponent<Rigidbody>();
         sc = GetComponent<SphereCollider>();
@@ -124,6 +136,8 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        bombCountText.text = "Bombs: " + bombCount;
+            rocketCountText.text = "Rockets: " + rocketCount;
         currentVelocity = rb.velocity.magnitude;
         if (!inFire) {
             playerTemp = Mathf.Lerp(playerTemp, 0f, Time.deltaTime/10f);
@@ -287,9 +301,26 @@ public class PlayerController : MonoBehaviour
                 audioSource.PlayOneShot(coinCollectSound);
 
             }
+        }
+
+        if (other.gameObject.CompareTag("BombToken") && other.gameObject.GetComponent<CoinController>() != null && !other.gameObject.GetComponent<CoinController>().collected) {
+            bombCount++;
+            bombCountText.text = "Bombs: " + bombCount;
+            other.gameObject.GetComponent<CoinController>().Collect();
+            Destroy(other.gameObject);
+            //audioSource.PlayOneShot(bombCollectSound);
+
+        } else if (other.gameObject.CompareTag("RocketToken") && other.gameObject.GetComponent<CoinController>() != null && !other.gameObject.GetComponent<CoinController>().collected)
+        {
+            other.gameObject.GetComponent<CoinController>().Collect();
+            rocketCount++;
+            rocketCountText.text = "Rockets: " + rocketCount;
+            Destroy(other.gameObject);
+            //audioSource.PlayOneShot(rocketCollectSound);
+        }
         
 
-        }
+        
 
         //check if the gameobject has the default tag
         if (other.gameObject.CompareTag("Platform"))

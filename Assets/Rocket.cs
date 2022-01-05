@@ -10,8 +10,11 @@ public class Rocket : MonoBehaviour
     public AudioClip explosionSound;
     public GameObject explosionPrefab;
     private AudioSource audioSource;
+    public bool followMouse = true;
 
     public Vector3 target;
+
+    public FlashBang flashBang;
 
 
     // Start is called before the first frame update
@@ -23,13 +26,17 @@ public class Rocket : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //rotate the rocket to look at the target
-        transform.LookAt(target);
-        //move towards the target
-        transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-        if(Vector3.Distance(transform.position, target) < 0.1f)
+        if(followMouse)
         {
-            Explode();
+            
+            //rotate the rocket to look at the target
+            transform.LookAt(target);
+            //move towards the target
+            transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+            if(Vector3.Distance(transform.position, target) < 0.1f)
+            {
+                Explode();
+            }
         }
     }
 
@@ -49,6 +56,14 @@ public class Rocket : MonoBehaviour
 
     private void Explode() {
         audioSource.PlayOneShot(explosionSound);
+
+        //if the flashbang gameobject is looking within 15 degrees of the rocket, then flash the screen
+        if(Vector3.Angle(flashBang.transform.forward, transform.forward) < 15f)
+        {
+            flashBang.Flash();
+        }
+
+
             GameObject explosion = Instantiate(explosionPrefab, transform.position, transform.rotation);
             //add an audio source to the explosion
             explosion.AddComponent<AudioSource>();
@@ -68,6 +83,26 @@ public class Rocket : MonoBehaviour
             {
                 var main = particle.main;
                 main.simulationSpeed = 1f/explosionScale;
+            }
+
+
+            //loop through all objects in the explosion radius with the tag "Untagged"
+            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionScale);
+            foreach(Collider collider in colliders)
+            {
+                if(collider.tag == "Untagged")
+                {
+                    //tilt the object back from the explosion point based on its distance from the explosion point
+                    Vector3 dir = collider.transform.position - transform.position;
+                    dir.Normalize();
+                    float distance = Vector3.Distance(collider.transform.position, transform.position);
+                    float falloff = 1f - (distance / explosionScale);
+                    //tilt the object back from the explosion point
+                    collider.transform.rotation = Quaternion.LookRotation(dir*falloff*0.05f);
+                
+
+
+                }
             }
 
 

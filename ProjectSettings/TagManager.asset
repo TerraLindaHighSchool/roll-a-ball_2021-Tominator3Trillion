@@ -12,6 +12,8 @@ TagManager:
   - Fire
   - CheckPoint
   - Camera
+  - BombToken
+  - RocketToken
   layers:
   - Default
   - TransparentFX

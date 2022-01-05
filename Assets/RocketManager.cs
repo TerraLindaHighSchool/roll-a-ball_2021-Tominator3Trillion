@@ -12,6 +12,9 @@ public class RocketManager : MonoBehaviour
     public AudioClip launchSound;
     public AudioClip lockOnSound;
     private AudioSource audioSource;
+    public FlashBang flashBang;
+
+    public GameObject player;
 
     // Start is called before the first frame update
     void Start()
@@ -25,9 +28,9 @@ public class RocketManager : MonoBehaviour
     void Update()
     {
 
-        if(Input.GetMouseButtonDown(1))
+        if(Input.GetMouseButtonDown(1) && player.GetComponent<PlayerController>().bombCount > 0)
         {
-            
+            player.GetComponent<PlayerController>().bombCount--;
             startClickTime = 0;
             //Shoot a ray from the camera to the mouse position and get the position of the hit
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -36,17 +39,19 @@ public class RocketManager : MonoBehaviour
             if(Physics.Raycast(ray, out hit))
             {
                 bomb = Instantiate(bombPrefab, hit.point + new Vector3(0f,100f,0f), new Quaternion(180,0,0,0));
+                bomb.GetComponent<Rocket>().flashBang = flashBang;
             }
         }
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && player.GetComponent<PlayerController>().rocketCount > 0)
         {
             //miliseconds since the last click
             startClickTime = Time.time;
             audioSource.clip = lockOnSound;
             audioSource.Play();
         }
-        if(Input.GetMouseButtonUp(0))
+        if(Input.GetMouseButtonUp(0) && player.GetComponent<PlayerController>().rocketCount > 0)
         {
+            player.GetComponent<PlayerController>().rocketCount--;
             startClickTime = 0;
             if(audioSource.clip == lockOnSound)
             {
@@ -67,6 +72,7 @@ public class RocketManager : MonoBehaviour
             {
                 rocket = Instantiate(rocketPrefab, transform.position, Quaternion.identity);
                 rocket.GetComponent<Rocket>().target = hit.point;
+                rocket.GetComponent<Rocket>().flashBang = flashBang;
             }
             transform.parent.GetComponent<Collider>().enabled = true;
             GetComponent<Collider>().enabled = true;

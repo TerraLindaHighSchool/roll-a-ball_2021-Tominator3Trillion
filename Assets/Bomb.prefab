@@ -273,6 +273,8 @@ MonoBehaviour:
   explosionSound: {fileID: 8300000, guid: f9fdf96813cfb724c86396372bcad060, type: 3}
   explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
+  followMouse: 0
+  target: {x: 0, y: 0, z: 0}
 --- !u!82 &3919219359300916098
 AudioSource:
   m_ObjectHideFlags: 0
