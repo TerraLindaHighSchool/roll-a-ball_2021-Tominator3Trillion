@@ -156,11 +156,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 30
   maxDistance: 100
-  explosionScale: 1
+  explosionScale: 2
   explosionSound: {fileID: 8300000, guid: 2fb4c84e2e0283545981441419c0edc8, type: 3}
   explosionPrefab: {fileID: 1121192042590650, guid: e1b08032bec16ba4eb1ae23cbd572664,
     type: 3}
+  followMouse: 1
   target: {x: 0, y: 0, z: 0}
+  flashBang: {fileID: 0}
 --- !u!82 &2237395687924766120
 AudioSource:
   m_ObjectHideFlags: 0

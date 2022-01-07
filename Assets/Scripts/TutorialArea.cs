@@ -15,6 +15,8 @@ public class TutorialArea : MonoBehaviour
 
     public bool isMiniTutorial = false;
 
+    public GameObject enabledPopup;
+
     //write player attributes in the inspector
     [Header("Player Attributes")]
     public string requiredCondition;
@@ -127,10 +129,15 @@ public class TutorialArea : MonoBehaviour
         {
             if(checkConditions(other.gameObject))
             {
+                
                 if(textMesh.text != trueTutorialText && checkRequiredCondition(other.gameObject)) {
                     textMesh.text = trueTutorialText;
                     audioSource.clip = trueClip;
                     audioSource.Play();
+                    if(enabledPopup != null) {
+                        enabledPopup.SetActive(true);
+                    }
+
                 }
 
                 
@@ -152,6 +159,9 @@ public class TutorialArea : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" && shouldChange(other))
         {
+            if(enabledPopup != null) {
+                enabledPopup.SetActive(false);
+            }
             textMesh.text = "";
         }
     }

@@ -50,16 +50,34 @@ public class CameraFollow : MonoBehaviour
         mapPostprocessing.SetActive(false);
     }
 
+    public void SetMapModeTrue()
+    {
+        inMapMode = true;
+        mapPostprocessing.SetActive(inMapMode);
+        //target.GetComponent<PlayerController>().enabled = !inMapMode;
+        
+    }
+
+    //enable PortalTraveler after 1 second courotine
+    IEnumerator EnablePortalTraveler()
+    {
+        gameObject.GetComponent<PortalTraveller>().enabled = !inMapMode;
+        yield return new WaitForSeconds(1f);
+        gameObject.GetComponent<PortalTraveller>().enabled = true;
+    }
+    
+
     // Update is called once per frame
     void Update()
     {   
         //if keyinput is M, turn on inMapMode
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.M) && inMapMode)
         {
-            inMapMode = !inMapMode;
+            inMapMode = false;
             mapPostprocessing.SetActive(inMapMode);
             //target.GetComponent<PlayerController>().enabled = !inMapMode;
-            gameObject.GetComponent<PortalTraveller>().enabled = !inMapMode;
+            StartCoroutine(EnablePortalTraveler());
+            
         }
 
         

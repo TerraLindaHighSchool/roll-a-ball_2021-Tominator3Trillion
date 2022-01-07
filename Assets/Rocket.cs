@@ -45,7 +45,7 @@ public class Rocket : MonoBehaviour
     {
         Debug.Log("Collision Tag: " + collision.gameObject.tag);
 
-        if(collision.gameObject.tag != "Camera") {
+        if(collision.gameObject.tag != "Camera" && collision.collider.isTrigger == false) {
             Explode();
             
 
@@ -58,10 +58,7 @@ public class Rocket : MonoBehaviour
         audioSource.PlayOneShot(explosionSound);
 
         //if the flashbang gameobject is looking within 15 degrees of the rocket, then flash the screen
-        if(Vector3.Angle(flashBang.transform.forward, transform.forward) < 15f)
-        {
-            flashBang.Flash();
-        }
+        flashBang.Flash();
 
 
             GameObject explosion = Instantiate(explosionPrefab, transform.position, transform.rotation);
@@ -87,9 +84,15 @@ public class Rocket : MonoBehaviour
 
 
             //loop through all objects in the explosion radius with the tag "Untagged"
-            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionScale);
+            Collider[] colliders = Physics.OverlapSphere(transform.position, explosionScale*3);
             foreach(Collider collider in colliders)
             {
+                 if(collider.tag == "BombBroken") {
+                     collider.gameObject.transform.position = new Vector3(0,100f,0);
+                     
+                     Debug.Log("Destroyed BombBroken");
+                 }
+                
                 if(collider.tag == "Untagged")
                 {
                     //tilt the object back from the explosion point based on its distance from the explosion point
@@ -114,7 +117,7 @@ public class Rocket : MonoBehaviour
             //StartCoroutine(cameraShake.Shake(0.5f*explosionScale, 2f*explosionScale));
 
             Destroy(explosion, 2f * explosionScale);
-            Destroy(gameObject);
+            Destroy(gameObject,0.1f);
     }
 
 

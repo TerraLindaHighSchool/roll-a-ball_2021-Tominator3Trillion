@@ -36,11 +36,7 @@
     <ImplicitlyExpandDesignTimeFacades>false</ImplicitlyExpandDesignTimeFacades>
   </PropertyGroup>
   <ItemGroup>
-     <Compile Include="Assets\ButtonController.cs" />
-     <Compile Include="Assets\CameraShake.cs" />
      <Compile Include="Assets\EffectExamples\Misc Effects\Scripts\SpawnEffect.cs" />
-     <Compile Include="Assets\FlashBang.cs" />
-     <Compile Include="Assets\LockToObject.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\CameraUtility.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\MainCamera.cs" />
      <Compile Include="Assets\Portals\Scripts\Core\Portal.cs" />
@@ -54,11 +50,15 @@
      <Compile Include="Assets\Portals\Scripts\Demo\Spawner.cs" />
      <Compile Include="Assets\Rocket.cs" />
      <Compile Include="Assets\RocketManager.cs" />
+     <Compile Include="Assets\Scripts\ButtonController.cs" />
      <Compile Include="Assets\Scripts\CameraFollow.cs" />
+     <Compile Include="Assets\Scripts\CameraShake.cs" />
      <Compile Include="Assets\Scripts\Checkpoint.cs" />
      <Compile Include="Assets\Scripts\CoinController.cs" />
      <Compile Include="Assets\Scripts\FlameLight.cs" />
+     <Compile Include="Assets\Scripts\FlashBang.cs" />
      <Compile Include="Assets\Scripts\FreeCam.cs" />
+     <Compile Include="Assets\Scripts\LockToObject.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\PlayerPortalPhysics.cs" />
      <Compile Include="Assets\Scripts\TutorialArea.cs" />

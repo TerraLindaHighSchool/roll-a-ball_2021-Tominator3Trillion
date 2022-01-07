@@ -62,6 +62,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]public int bombCount = 0;
     [SerializeField]public int rocketCount = 0;
 
+    public GameObject rocketManager;
+    public bool inMapMode = false;
+
     
 
 
@@ -93,6 +96,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        //set map to if rocketManger is active
+        inMapMode = rocketManager.activeInHierarchy;
         if(IsGrounded()) {
             //get the value of the horizontal and vertical axis
             float moveHorizontal = Input.GetAxis("Horizontal");
@@ -137,7 +142,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         bombCountText.text = "Bombs: " + bombCount;
-            rocketCountText.text = "Rockets: " + rocketCount;
+        rocketCountText.text = "Rockets: " + rocketCount;
         currentVelocity = rb.velocity.magnitude;
         if (!inFire) {
             playerTemp = Mathf.Lerp(playerTemp, 0f, Time.deltaTime/10f);
